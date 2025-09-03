@@ -1,0 +1,96 @@
+<?php
+
+//use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuth;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LandingPageController;
+use Livewire\Volt\Volt;
+use App\Models\User;
+use App\Models\Penilaian;
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+// Rute untuk landing page
+Route::get('/', function () {
+    $statistik = [
+        'total_terdaftar' => User::where('role', 'dinas')->count(),
+        'menuju_informatif' => 0, // Ganti dengan logika yang benar jika ada
+        'kurang_informatif' => Penilaian::where('status_informatif', 'Kurang Informatif')->count(),
+        'cukup_informatif' => Penilaian::where('status_informatif', 'Cukup Informatif')->count(),
+        'sangat_informatif' => Penilaian::where('status_informatif', 'Sangat Informatif')->count(),
+    ];
+    return view('welcome', ['statistik' => $statistik]); // 'welcome' adalah nama file blade Anda
+});
+
+// Rute untuk halaman-halaman statis atau yang tidak menggunakan Volt
+Route::get('/register-success', function () {
+    return view('livewire.pages.auth.register-success');
+})->name('register.success');
+
+// --- Rute untuk Komponen Livewire/Volt ---
+
+// Rute untuk dashboard utama setelah login
+Volt::route('/dashboard', 'pages.dashboard')
+    ->middleware(['auth', 'verified'])
+    ->name('user.dashboard');
+    
+// Rute untuk halaman ubah biodata
+Volt::route('/biodata/edit', 'pages.edit-biodata')
+    ->middleware(['auth']) 
+    ->name('biodata.edit');
+
+// Rute untuk halaman informasi kuesioner
+Volt::route('/kuesioner', 'pages.kuesioner')
+    ->middleware(['auth']) 
+    ->name('kuesioner');
+
+// Rute untuk halaman menjawab kuesioner
+Volt::route('/kuesioner/jawab', 'pages.jawab-kuesioner')
+    ->middleware(['auth'])
+    ->name('kuesioner.jawab');
+
+// Rute untuk halaman notifikasi
+Volt::route('/notifikasi', 'pages.notifikasi')
+    ->middleware(['auth'])
+    ->name('notifikasi');
+
+// Rute untuk halaman konfirmasi keluar
+Volt::route('/keluar', 'pages.auth.logout-confirm')
+    ->middleware(['auth'])
+    ->name('logout.confirm');
+
+// Rute untuk halaman verifikasi kode lupa password
+Volt::route('/forgot-password/verify-code', 'pages.auth.verify-code')
+    ->name('password.verify-code');
+
+// Rute untuk halaman sukses setelah reset password
+Volt::route('/reset-password/success', 'pages.auth.password-reset-success')
+    ->name('password.update.success');
+
+Volt::route('/notifikasi', 'pages.notifikasi')
+    ->name('notifikasi');
+
+
+// Rute untuk profil pengguna
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+
+// Rute untuk otentikasi (login, register, dll.)
+require __DIR__.'/auth.php';
+
+// Panggil semua rute dari file admin.php
+
