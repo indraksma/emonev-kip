@@ -1,10 +1,9 @@
 <?php
 
 use App\Models\Kategori;
-use App\Models\Jadwal; 
+use App\Models\Jadwal;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 
@@ -13,7 +12,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     public $kategoriList;
     public $activeKategoriId;
     public $activeKategori;
-    public $jadwal; 
+    public $jadwal;
 
     /**
      * Mount the component and load data.
@@ -38,7 +37,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function loadKategori(): void
     {
         $this->kategoriList = Kategori::orderBy('id')->get();
-        
+
         if ($this->kategoriList->isNotEmpty()) {
             if (!$this->activeKategoriId || !$this->kategoriList->contains('id', $this->activeKategoriId)) {
                 $this->activeKategoriId = $this->kategoriList->first()->id;
@@ -72,10 +71,6 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function deleteKategori(): void
     {
         if ($this->activeKategori) {
-            if ($this->activeKategori->gambar) {
-                Storage::disk('public')->delete($this->activeKategori->gambar);
-            }
-            
             $this->activeKategori->delete();
             session()->flash('success', 'Kategori berhasil dihapus.');
             $this->loadKategori();
@@ -109,10 +104,10 @@ new #[Layout('components.layouts.admin')] class extends Component
                 <div class="flex space-x-2">
                     {{-- Tombol Jadwal Kuesioner (Diperbarui) --}}
                     <a href="{{ route('admin.kuesioner.jadwal') }}" wire:navigate class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200">Jadwal Kuesioner</a>
-                    
+
                     @if($activeKategori)
-                        <button 
-                            wire:click="deleteKategori" 
+                        <button
+                            wire:click="deleteKategori"
                             wire:confirm="Apakah Anda yakin ingin menghapus kategori ini?"
                             class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 inline-flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -143,44 +138,63 @@ new #[Layout('components.layouts.admin')] class extends Component
 
             <div class="mt-8">
                 @if($activeKategori)
-                    <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <img src="{{ $activeKategori->gambar ? asset('storage/' . $activeKategori->gambar) : 'https://placehold.co/800x200/EBF4FF/7F9CF5?text=Gambar+Kategori' }}" alt="Category Image" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $activeKategori->judul }}</h3>
-                            
-                            {{-- Menampilkan Jadwal --}}
-                            @if($jadwal)
-                                <div class="mt-2 text-xs text-gray-500 flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    <span>
-                                        Jadwal: {{ Carbon::parse($jadwal->tanggal_mulai)->isoFormat('D MMMM YYYY') }} - {{ Carbon::parse($jadwal->tanggal_selesai)->isoFormat('D MMMM YYYY') }}
-                                    </span>
-                                </div>
-                            @endif
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <!-- Badge Kategori -->
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold mb-4">
+                                    {{ $activeKategori->nama }}
+                                </span>
 
-                            <p class="mt-3 text-sm text-gray-600">
-                                {{ $activeKategori->deskripsi }}
-                            </p>
-                            <div class="mt-6 flex justify-end space-x-3">
-                                <a href="{{ route('admin.kuesioner.kategori.edit', ['kategori' => $activeKategori->id]) }}" wire:navigate class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Edit Kategori
-                                </a>
-                                <a href="{{ route('admin.kuesioner.pertanyaan.index', ['kategori' => $activeKategori->id]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    Lihat Detail Pertanyaan
-                                </a>
+                                <h3 class="text-2xl font-bold text-gray-900">{{ $activeKategori->judul }}</h3>
+
+                                {{-- Menampilkan Jadwal --}}
+                                @if($jadwal)
+                                    <div class="mt-3 inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>
+                                            Jadwal: {{ Carbon::parse($jadwal->tanggal_mulai)->isoFormat('D MMMM YYYY') }} - {{ Carbon::parse($jadwal->tanggal_selesai)->isoFormat('D MMMM YYYY') }}
+                                        </span>
+                                    </div>
+                                @endif
+
+                                <p class="mt-4 text-base text-gray-600 leading-relaxed">
+                                    {{ $activeKategori->deskripsi }}
+                                </p>
                             </div>
+
+                            <!-- Icon Kategori -->
+                            <div class="flex-shrink-0 ml-6">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                            <a href="{{ route('admin.kuesioner.kategori.edit', ['kategori' => $activeKategori->id]) }}" wire:navigate class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit Kategori
+                            </a>
+                            <a href="{{ route('admin.kuesioner.pertanyaan.index', ['kategori' => $activeKategori->id]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                Lihat Detail Pertanyaan
+                            </a>
                         </div>
                     </div>
                 @else
-                    <div class="text-center py-12">
-                        <p class="text-gray-500">Belum ada kategori yang dibuat.</p>
-                        <p class="text-sm text-gray-500 mt-2">Silakan klik "Tambah Kategori" untuk memulai.</p>
+                    <div class="text-center py-16">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        <h3 class="mt-4 text-lg font-medium text-gray-900">Belum ada kategori yang dibuat</h3>
+                        <p class="mt-2 text-sm text-gray-500">Silakan klik "Tambah Kategori" untuk memulai membuat kategori kuesioner.</p>
                     </div>
                 @endif
             </div>

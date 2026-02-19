@@ -4,12 +4,43 @@ use Livewire\Volt\Component;
 use App\Models\Pesan;
 use App\Models\User;
 use Livewire\Attributes\Layout;
+use Livewire\WithPagination;
 
 new #[Layout('components.layouts.admin')] class extends Component
 {
+    use WithPagination;
+
+    // Form properties
     public $judul = '';
     public $isi = '';
 
+    // CRUD properties
+    public ?Pesan $selectedPesan = null;
+    public bool $isEditMode = false;
+    public bool $showDeleteModal = false;
+    public $pesanIdToDelete = null;
+
+    /**
+     * Mount the component
+     */
+    public function mount(): void
+    {
+        // Pagination is handled by Livewire WithPagination trait
+    }
+
+    /**
+     * Get all messages with pagination
+     */
+    public function getPesanListProperty()
+    {
+        return Pesan::withCount('users')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+    }
+
+    /**
+     * Create a new message
+     */
     public function kirimPesan()
     {
         $this->validate([
@@ -31,6 +62,83 @@ new #[Layout('components.layouts.admin')] class extends Component
         $this->reset(['judul', 'isi']);
         session()->flash('success', 'Pesan notifikasi berhasil dikirim ke semua PPID Pelaksana.');
     }
+
+    /**
+     * Enter edit mode for a message
+     */
+    public function editPesan($id): void
+    {
+        $this->selectedPesan = Pesan::find($id);
+        $this->judul = $this->selectedPesan->judul;
+        $this->isi = $this->selectedPesan->isi;
+        $this->isEditMode = true;
+    }
+
+    /**
+     * Update the selected message
+     */
+    public function updatePesan(): void
+    {
+        $validated = $this->validate([
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
+        ]);
+
+        $this->selectedPesan->update($validated);
+        session()->flash('success', 'Pesan berhasil diperbarui.');
+        $this->cancelEdit();
+    }
+
+    /**
+     * Show delete confirmation modal
+     */
+    public function confirmDelete($id): void
+    {
+        $this->pesanIdToDelete = $id;
+        $this->showDeleteModal = true;
+    }
+
+    /**
+     * Delete a message
+     */
+    public function deletePesan(): void
+    {
+        $pesan = Pesan::find($this->pesanIdToDelete);
+        $pesan->delete();
+
+        session()->flash('success', 'Pesan berhasil dihapus.');
+        $this->showDeleteModal = false;
+        $this->pesanIdToDelete = null;
+    }
+
+    /**
+     * Cancel edit mode
+     */
+    public function cancelEdit(): void
+    {
+        $this->reset(['judul', 'isi', 'selectedPesan', 'isEditMode']);
+    }
+
+    /**
+     * Cancel delete operation
+     */
+    public function cancelDelete(): void
+    {
+        $this->showDeleteModal = false;
+        $this->pesanIdToDelete = null;
+    }
+
+    /**
+     * Handle form submission based on mode
+     */
+    public function submit(): void
+    {
+        if ($this->isEditMode) {
+            $this->updatePesan();
+        } else {
+            $this->kirimPesan();
+        }
+    }
 }; ?>
 
 <div>
@@ -51,32 +159,218 @@ new #[Layout('components.layouts.admin')] class extends Component
             </div>
         @endif
 
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <form wire:submit="kirimPesan">
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Kirim Pesan Notifikasi</h2>
-                    <p class="mt-1 text-sm text-gray-600">Kirim pemberitahuan penting kepada seluruh Badan Publik / PPID Pelaksana yang terdaftar di sistem E-Monev.</p>
+        <!-- Daftar Pesan -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Daftar Pesan Notifikasi</h2>
+
+            @if($this->pesanList->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">No</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Isi</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Penerima</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-48">Tanggal Dibuat</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($this->pesanList->items() as $index => $pesan)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {{ ($this->pesanList->currentPage() - 1) * $this->pesanList->perPage() + $index + 1 }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                        {{ $pesan->judul }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                                        {{ \Illuminate\Support\Str::limit($pesan->isi, 100) }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                            {{ $pesan->users_count }} User
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                        {{ $pesan->created_at }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                        <div class="flex justify-center items-center space-x-2">
+                                            <button wire:click="editPesan({{ $pesan->id }})" class="p-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                            <button wire:click="confirmDelete({{ $pesan->id }})" class="p-2 rounded-md bg-red-600 text-white hover:bg-red-700" title="Hapus">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="mt-6 space-y-4">
+                <!-- Pagination -->
+                @if($this->pesanList->hasPages())
+                    <div class="mt-4">
+                        {{ $this->pesanList->links() }}
+                    </div>
+                @endif
+            @else
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada pesan</h3>
+                    <p class="mt-1 text-sm text-gray-500">Mulai dengan membuat pesan notifikasi baru.</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Form Create/Edit Pesan -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="border-b pb-4 mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">
+                    {{ $isEditMode ? 'Edit Pesan Notifikasi' : 'Kirim Pesan Notifikasi' }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    {{ $isEditMode ? 'Perbarui pesan notifikasi yang sudah ada.' : 'Kirim pemberitahuan penting kepada seluruh Badan Publik / PPID Pelaksana yang terdaftar di sistem E-Monev.' }}
+                </p>
+            </div>
+
+            <form wire:submit="submit">
+                <div class="space-y-4">
                     <div>
                         <label for="judul" class="block text-sm font-medium text-gray-700">Judul Notifikasi</label>
-                        <input wire:model="judul" id="judul" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <input wire:model="judul" id="judul" type="text"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Masukkan judul notifikasi">
                         @error('judul') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label for="isi" class="block text-sm font-medium text-gray-700">Isi Pesan</label>
-                        <textarea wire:model="isi" id="isi" rows="8" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                        <textarea wire:model="isi" id="isi" rows="8"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Masukkan isi pesan"></textarea>
                         @error('isi') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end">
-                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
-                        Kirim
-                    </button>
+                <div class="mt-6 flex justify-end space-x-3">
+                    @if($isEditMode)
+                        <button type="button" wire:click="cancelEdit"
+                            class="px-6 py-2 border border-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-50">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600">
+                            Simpan Perubahan
+                        </button>
+                    @else
+                        <button type="submit"
+                            class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
+                            Kirim
+                        </button>
+                    @endif
                 </div>
             </form>
         </div>
     </main>
+
+    <!-- Delete Confirmation Modal -->
+    @if($showDeleteModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <!-- Backdrop -->
+                <div class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity" aria-hidden="true" wire:click="cancelDelete"></div>
+
+                <!-- Modal panel -->
+                <div class="relative bg-white rounded-lg shadow-xl max-w-lg w-full mx-auto transform transition-all">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-red-100">
+                                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900" id="modal-title">
+                                Konfirmasi Hapus
+                            </h3>
+                        </div>
+                        <button wire:click="cancelDelete" class="text-gray-400 hover:text-gray-500 transition-colors">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-6">
+                            Apakah Anda yakin ingin menghapus pesan notifikasi ini? Tindakan ini tidak dapat dibatalkan.
+                        </p>
+
+                        @if($pesanIdToDelete)
+                            @php
+                                $pesanToDelete = \App\Models\Pesan::find($pesanIdToDelete);
+                            @endphp
+                            @if($pesanToDelete)
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <div class="flex items-start space-x-3">
+                                        <svg class="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-bold text-red-900 mb-1">
+                                                {{ $pesanToDelete->judul }}
+                                            </p>
+                                            <p class="text-sm text-red-700">
+                                                {{ \Illuminate\Support\Str::limit($pesanToDelete->isi, 200) }}
+                                            </p>
+                                            <div class="mt-3 flex items-center space-x-4 text-xs text-red-600">
+                                                <span class="flex items-center space-x-1">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span>{{ $pesanToDelete->created_at }}</span>
+                                                </span>
+                                                <span class="flex items-center space-x-1">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                    <span>{{ $pesanToDelete->users_count }} Penerima</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endif
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse space-x-3 space-x-reverse border-t border-gray-200">
+                        <button type="button" wire:click="deletePesan"
+                            class="inline-flex items-center justify-center rounded-md border border-transparent shadow-sm px-6 py-2.5 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Ya, Hapus Pesan
+                        </button>
+                        <button type="button" wire:click="cancelDelete"
+                            class="inline-flex items-center justify-center rounded-md border border-gray-300 shadow-sm px-6 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-colors">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

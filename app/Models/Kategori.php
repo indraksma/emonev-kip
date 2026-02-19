@@ -19,7 +19,6 @@ class Kategori extends Model
         'nama',
         'judul',
         'deskripsi',
-        'gambar',
     ];
 
     public function pertanyaans(): HasMany

@@ -62,7 +62,7 @@ new #[Layout('components.layouts.admin')] class extends Component
             session()->flash('success', 'Pertanyaan baru berhasil ditambahkan.');
         }
 
-        return $this->redirectRoute('kuesioner.pertanyaan.index', ['kategori' => $this->kategori->id]);
+        return $this->redirectRoute('admin.kuesioner.pertanyaan.index', ['kategori' => $this->kategori->id]);
     }
 }; ?>
 
@@ -72,7 +72,7 @@ new #[Layout('components.layouts.admin')] class extends Component
 
             <!-- Header Form (Dinamis) -->
             <div class="flex items-center mb-6">
-                <a href="{{ route('kuesioner.pertanyaan.index', ['kategori' => $kategori->id]) }}" wire:navigate class="text-gray-500 hover:text-gray-800">
+                <a href="{{ route('admin.kuesioner.pertanyaan.index', ['kategori' => $kategori->id]) }}" wire:navigate class="text-gray-500 hover:text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -122,7 +122,7 @@ new #[Layout('components.layouts.admin')] class extends Component
 
                 <!-- Tombol Aksi (Dinamis) -->
                 <div class="mt-8 flex justify-end space-x-4">
-                    <a href="{{ route('kuesioner.pertanyaan.index', ['kategori' => $kategori->id]) }}" wire:navigate
+                    <a href="{{ route('admin.kuesioner.pertanyaan.index', ['kategori' => $kategori->id]) }}" wire:navigate
                         class="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                         Batal
                     </a>

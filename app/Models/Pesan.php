@@ -16,6 +16,11 @@ class Pesan extends Model
         'isi',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:d F Y H:i',
+        'updated_at' => 'datetime:d F Y H:i',
+    ];
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'pesan_user')

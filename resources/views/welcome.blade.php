@@ -4,6 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logobna.png') }}">
+
     <title>E-Monev Banjarnegara</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -90,17 +94,17 @@
         <section class="bg-gradient-to-b from-blue-50 to-white py-20">
             <div class="max-w-screen-xl mx-auto px-6 md:px-20 grid md:grid-cols-3 gap-8 text-center">
                 <div class="bg-white p-8 rounded-lg shadow-md">
-                    <img src="/images/icon.png" alt="Icon Registrasi" class="mx-auto mb-4 w-16 h-16">
+                    <img src="/images/Icon.png" alt="Icon Registrasi" class="mx-auto mb-4 w-16 h-16">
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Registrasi PPID Pelaksana</h3>
                     <p class="text-gray-600">Pejabat Pengelola Informasi dan Dokumentasi Pelaksana pada Badan Publik di Lingkungan Pemerintah Kabupaten Banjarnegara melakukan pendaftaran akun.</p>
                 </div>
                 <div class="bg-white p-8 rounded-lg shadow-md">
-                    <img src="/images/icon-1.png" alt="Icon Kuisioner" class="mx-auto mb-4 w-16 h-16">
+                    <img src="/images/Icon-1.png" alt="Icon Kuisioner" class="mx-auto mb-4 w-16 h-16">
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Pengisian Kuisioner</h3>
                     <p class="text-gray-600">PPID Pelaksana melakukan pengisian kuisioner evaluasi mandiri secara online melalui website e-monev.</p>
                 </div>
                 <div class="bg-white p-8 rounded-lg shadow-md">
-                    <img src="/images/icon-2.png" alt="Icon Verifikasi" class="mx-auto mb-4 w-16 h-16">
+                    <img src="/images/Icon-2.png" alt="Icon Verifikasi" class="mx-auto mb-4 w-16 h-16">
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Verifikasi Kuisioner</h3>
                     <p class="text-gray-600">Tim Verifikator melakukan verifikasi terhadap kuisioner evaluasi mandiri yang telah dikirimkan oleh PPID Pelaksana.</p>
                 </div>
@@ -113,7 +117,7 @@
                 
                 <div class="grid md:grid-cols-3 gap-x-12 gap-y-16">
                     <div>
-                        <img src="/images/icon-3.png" alt="Icon Portal" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-3.png" alt="Icon Portal" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">1.</div>
                             <h4 class="text-xl font-bold text-gray-900">Portal E-Monev</h4>
@@ -121,7 +125,7 @@
                         <p class="text-gray-600 mt-2">Badan Publik Mengakses portal e-monev kabupaten Banjarnegara.</p>
                     </div>
                     <div>
-                        <img src="/images/icon-4.png" alt="Icon Akun" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-4.png" alt="Icon Akun" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">2.</div>
                             <h4 class="text-xl font-bold text-gray-900">Membuat Akun & Login E-Monev</h4>
@@ -129,7 +133,7 @@
                         <p class="text-gray-600 mt-2">Pilih Registrasi Badan Publik untuk membuat akun baru. Badan Publik diharuskan untuk mencantumkan alamat email resmi PPID pada data responden.</p>
                     </div>
                     <div>
-                        <img src="/images/icon-5.png" alt="Icon Kuesioner" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-5.png" alt="Icon Kuesioner" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">3.</div>
                             <h4 class="text-xl font-bold text-gray-900">Mengisi Kuisioner</h4>
@@ -137,7 +141,7 @@
                         <p class="text-gray-600 mt-2">Badan Publik melakukan pengisian kuesioner mandiri sesuai dengan kategori masing-masing.</p>
                     </div>
                     <div>
-                        <img src="/images/icon-6.png" alt="Icon Nilai Kuesioner" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-6.png" alt="Icon Nilai Kuesioner" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">4.</div>
                             <h4 class="text-xl font-bold text-gray-900">Nilai Kuisioner</h4>
@@ -145,7 +149,7 @@
                         <p class="text-gray-600 mt-2">Hasil penilaian berdasarkan kuesioner yang telah diisi oleh Badan Publik.</p>
                     </div>
                     <div>
-                        <img src="/images/icon-7.png" alt="Icon Nilai Verifikasi" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-7.png" alt="Icon Nilai Verifikasi" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">5.</div>
                             <h4 class="text-xl font-bold text-gray-900">Nilai Verifikasi</h4>
@@ -153,7 +157,7 @@
                         <p class="text-gray-600 mt-2">Hasil penilaian dari verifikator yang sudah terpilih berdasarkan jawaban kuesioner yang telah diisi oleh Badan Publik.</p>
                     </div>
                     <div>
-                        <img src="/images/icon-8.png" alt="Icon Selesai" class="mb-4 w-16 h-16">
+                        <img src="/images/Icon-8.png" alt="Icon Selesai" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">6.</div>
                             <h4 class="text-xl font-bold text-gray-900">Proses E-Monev Selesai</h4>
