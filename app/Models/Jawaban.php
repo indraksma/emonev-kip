@@ -12,7 +12,7 @@ class Jawaban extends Model
 
     protected $fillable = [
         'submission_id',
-        'pertanyaan_id',
+        'jadwal_pertanyaan_id',
         'jawaban',
         'link_dokumen',
         'upload_dokumen',
@@ -23,9 +23,8 @@ class Jawaban extends Model
         return $this->belongsTo(Submission::class);
     }
 
-    public function pertanyaan(): BelongsTo
+    public function jadwalPertanyaan(): BelongsTo
     {
-        return $this->belongsTo(Pertanyaan::class);
+        return $this->belongsTo(JadwalPertanyaan::class);
     }
-
 }

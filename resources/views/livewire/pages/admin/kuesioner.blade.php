@@ -83,10 +83,6 @@ new #[Layout('components.layouts.admin')] class extends Component
     <x-slot name="header">
         <div class="flex items-center space-x-8">
             <h1 class="text-3xl font-bold text-gray-900">Kuesioner</h1>
-            <div class="relative">
-                <input type="text" placeholder="Cari sesuatu..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
         </div>
     </x-slot>
 
@@ -139,19 +135,20 @@ new #[Layout('components.layouts.admin')] class extends Component
             <div class="mt-8">
                 @if($activeKategori)
                     <div class="border border-gray-200 rounded-lg p-6">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
+                        <div class="flex items-start justify-between gap-6">
+                            <!-- Konten Kategori -->
+                            <div class="flex-1 min-w-0">
                                 <!-- Badge Kategori -->
-                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold mb-4">
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold mb-3">
                                     {{ $activeKategori->nama }}
                                 </span>
 
-                                <h3 class="text-2xl font-bold text-gray-900">{{ $activeKategori->judul }}</h3>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ $activeKategori->judul }}</h3>
 
                                 {{-- Menampilkan Jadwal --}}
                                 @if($jadwal)
-                                    <div class="mt-3 inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <div class="mb-3 inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                         <span>
@@ -160,16 +157,16 @@ new #[Layout('components.layouts.admin')] class extends Component
                                     </div>
                                 @endif
 
-                                <p class="mt-4 text-base text-gray-600 leading-relaxed">
+                                <p class="text-base text-gray-600 leading-relaxed">
                                     {{ $activeKategori->deskripsi }}
                                 </p>
                             </div>
 
                             <!-- Icon Kategori -->
-                            <div class="flex-shrink-0 ml-6">
-                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5a2 2 0 012 2v14a2 2 0 01-2 2H9a2 2 0 01-2-2z" />
+                            <div class="flex-shrink-0">
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m-8 5h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                             </div>

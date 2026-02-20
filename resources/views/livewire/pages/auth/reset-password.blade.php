@@ -62,7 +62,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <!-- Logo -->
             <div class="flex items-center space-x-2 mb-12">
                 <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
             </div>
 
             <!-- Header -->
@@ -73,7 +73,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <form wire:submit="resetPassword" class="mt-8 space-y-6">
                 <!-- Email (hidden, but needed for the process) -->
                 <input wire:model="email" id="email" type="hidden">
-                
+
                 <!-- Password Input -->
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700">Buat Password</label>

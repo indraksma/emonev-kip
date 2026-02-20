@@ -45,7 +45,7 @@ new #[Layout('components.layouts.app')] class extends Component
         if ($tokenData && now()->subMinutes(10)->lt($tokenData->created_at)) {
             // Jika valid, hapus token lama agar tidak bisa dipakai lagi.
             DB::table('password_reset_tokens')->where('email', $this->email)->delete();
-            
+
             // Buat token reset password yang sebenarnya (yang panjang dan aman).
             $user = User::where('email', $this->email)->first();
             $longToken = Password::createToken($user);
@@ -92,7 +92,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <!-- Logo -->
             <div class="flex items-center space-x-2 mb-12">
                 <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
             </div>
 
             <!-- Back to Login Link -->

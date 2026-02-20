@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Models\Submission; 
+use App\Models\Submission;
 use App\Models\Laporan;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -18,11 +18,11 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function mount(): void
     {
         $this->ppidTerdaftar = User::where('role', 'dinas')->count();
-        
+
         $this->menungguVerifikasi = Submission::where('status_verifikasi', 'Menunggu')->count();
         $this->selesaiVerifikasi = Submission::where('status_verifikasi', 'Terverifikasi')->count();
-        
-        $this->telahDinilai = Laporan::count(); 
+
+        $this->telahDinilai = Laporan::count();
 
         $this->listVerifikasi = Submission::with(['user.badanPublik', 'kategori']) // Relasi 'kategori' ada di Submission
                                     ->latest('tanggal_submit')
@@ -35,10 +35,6 @@ new #[Layout('components.layouts.admin')] class extends Component
     <x-slot name="header">
         <div class="flex items-center space-x-8">
             <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <div class="relative">
-                <input type="text" placeholder="Cari sesuatu..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
         </div>
     </x-slot>
 
@@ -112,11 +108,11 @@ new #[Layout('components.layouts.admin')] class extends Component
                                 <td class="px-6 py-4 text-sm">{{ $item->user->badanPublik->nama_badan_publik ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                            
+
                                         {{ $item->kategori->nama ?? 'N/A' }}
                                     </span>
                                 </td>
-                                
+
                                 <td class="px-6 py-4 text-sm">{{ \Carbon\Carbon::parse($item->tanggal_submit)->format('d F Y') }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     @if($item->status_verifikasi == 'Terverifikasi')

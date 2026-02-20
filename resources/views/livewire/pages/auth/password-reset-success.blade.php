@@ -15,7 +15,7 @@ new class extends Component
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registrasi Berhasil - E-Monev Banjarnegara</title>
+    <title>Registrasi Berhasil - E-Monev KIP Banjarnegara</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -32,7 +32,7 @@ new class extends Component
                 <div class="flex justify-start mb-8">
                     <a href="/" class="flex items-center space-x-2">
                         <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                        <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                        <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                     </a>
                 </div>
                 <!-- Ganti 'celebrate.gif' dengan nama file GIF Anda -->

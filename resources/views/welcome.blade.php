@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logobna.png') }}">
 
-    <title>E-Monev Banjarnegara</title>
+    <title>E-Monev KIP Banjarnegara</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -34,7 +34,7 @@
         <nav id="navbar" class="max-w-screen-xl mx-auto px-6 md:px-20 py-3 flex justify-between items-center">
             <a href="/" class="flex items-center space-x-2">
                 <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
             </a>
 
             <div class="hidden md:flex items-center space-x-2 lg:space-x-4">
@@ -48,7 +48,7 @@
                 <a href="/login" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">Masuk</a>
                 <a href="/register" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Registrasi</a>
             </div>
-            
+
             <div class="md:hidden">
                 <button class="text-gray-800 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -76,7 +76,7 @@
                 <div class="relative flex justify-center items-center">
                     <img src="/images/Ellipses.png" alt="Background" class="absolute top-1/2 left-1/2 w-[657px] h-[618px] max-w-none -translate-x-1/2 -translate-y-1/2">
                     <img src="/images/pejabat.png" alt="Pejabat Banjarnegara" class="relative w-full h-auto max-w-full">
-                    
+
                     <div class="absolute -bottom-4 left-0 w-full bg-blue-600 text-white p-4 rounded-lg shadow-lg flex justify-around items-center">
                         <div class="text-center">
                             <p class="font-bold">Dr. Amalia Desiana</p>
@@ -101,7 +101,7 @@
                 <div class="bg-white p-8 rounded-lg shadow-md">
                     <img src="/images/Icon-1.png" alt="Icon Kuisioner" class="mx-auto mb-4 w-16 h-16">
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Pengisian Kuisioner</h3>
-                    <p class="text-gray-600">PPID Pelaksana melakukan pengisian kuisioner evaluasi mandiri secara online melalui website e-monev.</p>
+                    <p class="text-gray-600">PPID Pelaksana melakukan pengisian kuisioner evaluasi mandiri secara online melalui website e-monev KIP.</p>
                 </div>
                 <div class="bg-white p-8 rounded-lg shadow-md">
                     <img src="/images/Icon-2.png" alt="Icon Verifikasi" class="mx-auto mb-4 w-16 h-16">
@@ -114,21 +114,21 @@
         <section id="alur" class="py-20 bg-white">
             <div class="max-w-screen-xl mx-auto px-6 md:px-20">
                 <h2 class="text-[56px] font-bold text-center text-blue-600 mb-16 leading-tight">Alur Monitoring dan Evaluasi <br> Keterbukaan Informasi Publik</h2>
-                
+
                 <div class="grid md:grid-cols-3 gap-x-12 gap-y-16">
                     <div>
                         <img src="/images/Icon-3.png" alt="Icon Portal" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">1.</div>
-                            <h4 class="text-xl font-bold text-gray-900">Portal E-Monev</h4>
+                            <h4 class="text-xl font-bold text-gray-900">Portal E-Monev KIP</h4>
                         </div>
-                        <p class="text-gray-600 mt-2">Badan Publik Mengakses portal e-monev kabupaten Banjarnegara.</p>
+                        <p class="text-gray-600 mt-2">Badan Publik Mengakses portal e-monev KIP kabupaten Banjarnegara.</p>
                     </div>
                     <div>
                         <img src="/images/Icon-4.png" alt="Icon Akun" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">2.</div>
-                            <h4 class="text-xl font-bold text-gray-900">Membuat Akun & Login E-Monev</h4>
+                            <h4 class="text-xl font-bold text-gray-900">Membuat Akun & Login E-Monev KIP</h4>
                         </div>
                         <p class="text-gray-600 mt-2">Pilih Registrasi Badan Publik untuk membuat akun baru. Badan Publik diharuskan untuk mencantumkan alamat email resmi PPID pada data responden.</p>
                     </div>
@@ -160,14 +160,14 @@
                         <img src="/images/Icon-8.png" alt="Icon Selesai" class="mb-4 w-16 h-16">
                         <div class="flex items-baseline space-x-3">
                             <div class="text-3xl font-bold text-blue-600">6.</div>
-                            <h4 class="text-xl font-bold text-gray-900">Proses E-Monev Selesai</h4>
+                            <h4 class="text-xl font-bold text-gray-900">Proses E-Monev KIP Selesai</h4>
                         </div>
                         <p class="text-gray-600 mt-2">Seluruh tahapan monitoring dan evaluasi telah rampung. Badan Publik kini dapat mengakses laporan akhir dari penilaian yang telah dilakukan.</p>
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <section id="statistik" class="bg-gradient-to-b from-white to-blue-50 py-20">
             <div class="max-w-screen-xl mx-auto px-6 md:px-20 text-center">
                 <h2 class="text-[56px] font-bold text-center text-blue-600 mb-16 leading-tight">Statistik Hasil Penilaian</h2>
@@ -202,7 +202,7 @@
         </section>
 
     </main>
-    
+
     <!-- =========== Footer (as Kontak Section) =========== -->
     <footer id="kontak" class="bg-gradient-to-b from-blue-800 to-gray-900 text-white relative overflow-hidden pt-24">
         <div class="max-w-screen-xl mx-auto px-6 md:px-20 relative z-10">
@@ -211,7 +211,7 @@
                 <div class="text-left">
                     <a href="/" class="flex items-center space-x-4 mb-8">
                         <img src="/images/logobna.png" alt="Logo E-Monev" class="h-12 w-auto bg-white p-1 rounded">
-                        <span class="text-2xl font-bold">E-Monev</span>
+                        <span class="text-2xl font-bold">E-Monev KIP</span>
                     </a>
                     <h2 class="text-3xl lg:text-4xl font-bold leading-tight">
                         Wujudkan Kabupaten Banjarnegara menjadi Kabupaten yang Informatif. Optimalkan Layanan Informasi Publik, Mulai Sekarang!
@@ -258,7 +258,7 @@
             </div>
         </div>
         <div class="border-t border-blue-700/50 mt-16">
-            <p class="text-center py-4 text-sm text-gray-400">&copy; {{ date('Y') }} E-Monev Kabupaten Banjarnegara. All rights reserved.</p>
+            <p class="text-center py-4 text-sm text-gray-400">&copy; {{ date('Y') }} E-Monev KIP Kabupaten Banjarnegara. All rights reserved.</p>
         </div>
     </footer>
 
@@ -310,7 +310,7 @@
                     }
                 });
             }, { threshold: 0.5 });
-            
+
             counters.forEach(counter => {
                 observer.observe(counter);
             });

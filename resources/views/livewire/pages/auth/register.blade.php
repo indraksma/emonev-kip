@@ -22,11 +22,6 @@ new #[Layout('components.layouts.guest')] class extends Component
     public string $jabatan = '';
     public string $email_responden = ''; // This will be the login email
 
-    // Data PPID
-    public string $nama_ppid = '';
-    public string $telepon_ppid = '';
-    public string $email_ppid = '';
-
     // Informasi Akun
     public string $password = '';
     public string $password_confirmation = '';
@@ -46,9 +41,6 @@ new #[Layout('components.layouts.guest')] class extends Component
             'telepon_responden' => ['required', 'string', 'max:20'],
             'jabatan' => ['required', 'string', 'max:255'],
             'email_responden' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email'],
-            'nama_ppid' => ['required', 'string', 'max:255'],
-            'telepon_ppid' => ['required', 'string', 'max:20'],
-            'email_ppid' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'confirmed', 'min:8'],
         ]);
 
@@ -70,9 +62,6 @@ new #[Layout('components.layouts.guest')] class extends Component
             'alamat' => $this->alamat,
             'telepon_responden' => $this->telepon_responden,
             'jabatan' => $this->jabatan,
-            'nama_ppid' => $this->nama_ppid,
-            'telepon_ppid' => $this->telepon_ppid,
-            'email_ppid' => $this->email_ppid,
         ]);
 
         event(new Registered($user));
@@ -88,7 +77,7 @@ new #[Layout('components.layouts.guest')] class extends Component
             <div class="flex justify-end mb-4">
                  <a href="/" class="flex items-center space-x-2">
                     <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                    <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                 </a>
             </div>
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
@@ -151,28 +140,6 @@ new #[Layout('components.layouts.guest')] class extends Component
                                 <input wire:model="email_responden" id="email_responden" type="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                 <p class="mt-1 text-xs text-red-500">*email responden ini digunakan untuk login</p>
                                 <x-input-error :messages="$errors->get('email_responden')" class="mt-2" />
-                            </div>
-                        </div>
-                    </fieldset>
-
-                     <!-- Data PPID -->
-                    <fieldset class="space-y-6">
-                        <legend class="text-lg font-semibold text-gray-900">Data PPID</legend>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div>
-                                <label for="nama_ppid" class="block text-sm font-medium text-gray-700">Nama PPID</label>
-                                <input wire:model="nama_ppid" id="nama_ppid" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <x-input-error :messages="$errors->get('nama_ppid')" class="mt-2" />
-                            </div>
-                             <div>
-                                <label for="telepon_ppid" class="block text-sm font-medium text-gray-700">No. Telepon</label>
-                                <input wire:model="telepon_ppid" id="telepon_ppid" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <x-input-error :messages="$errors->get('telepon_ppid')" class="mt-2" />
-                            </div>
-                             <div class="md:col-span-2">
-                                <label for="email_ppid" class="block text-sm font-medium text-gray-700">Email PPID</label>
-                                <input wire:model="email_ppid" id="email_ppid" type="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <x-input-error :messages="$errors->get('email_ppid')" class="mt-2" />
                             </div>
                         </div>
                     </fieldset>

@@ -21,8 +21,8 @@ class RedirectIfAuthenticated
                     return redirect(route('admin.dashboard'));
                 }
 
-                // Jika tidak, arahkan ke halaman home user biasa.
-                return redirect('/home'); // Ganti '/home' jika halaman utama user berbeda
+                // Jika tidak, arahkan ke dashboard user biasa (dinas).
+                return redirect(route('user.dashboard'));
             }
         }
 

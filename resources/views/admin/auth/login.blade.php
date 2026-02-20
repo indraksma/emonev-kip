@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - E-Monev Banjarnegara</title>
+    <title>Login - E-Monev KIP Banjarnegara</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -21,12 +21,12 @@
                 <!-- Logo -->
                 <div class="flex items-center space-x-2 mb-12">
                     <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                    <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                 </div>
 
                 <!-- Header -->
                 <h1 class="text-3xl font-bold text-gray-900">Masuk</h1>
-                <p class="mt-2 text-gray-600">Masuk untuk mengakses akun admin e-monev</p>
+                <p class="mt-2 text-gray-600">Masuk untuk mengakses akun admin e-monev KIP</p>
 
                 <!-- Login Form -->
                 <form method="POST" action="{{ route('admin.login.store') }}" class="mt-8 space-y-6">

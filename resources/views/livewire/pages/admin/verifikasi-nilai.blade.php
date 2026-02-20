@@ -18,7 +18,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function mount(Submission $submission): void
     {
         $this->submission = $submission;
-        $this->answers = $submission->jawaban()->with('pertanyaan')->get();
+        $this->answers = $submission->jawaban()->with('jadwalPertanyaan')->get();
         // Load nilai yang sudah ada jika ada
         $penilaian = $this->submission->penilaian;
         if ($penilaian) {
@@ -136,7 +136,7 @@ new #[Layout('components.layouts.admin')] class extends Component
                         @forelse ($answers as $answer)
                             <tr>
                                 <td class="px-6 py-4 text-sm text-gray-500">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-900">{{ $answer->pertanyaan->teks_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $answer->jadwalPertanyaan->teks_pertanyaan ?? 'Pertanyaan tidak ditemukan' }}</td>
                                 <td class="px-6 py-4 text-sm font-bold {{ $answer->jawaban == 'Ya' ? 'text-green-600' : 'text-red-600' }}">
                                     {{ $answer->jawaban ?? '-' }}
                                 </td>

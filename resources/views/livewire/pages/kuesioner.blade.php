@@ -4,6 +4,7 @@ use App\Models\BadanPublik;
 use App\Models\Jawaban;
 use App\Models\Kategori;
 use App\Models\Jadwal;
+use App\Models\JadwalPertanyaan;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Livewire\Volt\Component;
@@ -24,35 +25,50 @@ new #[Layout('components.layouts.app')] class extends Component
             $this->namaResponden     = $user->name;
             $this->teleponResponden  = $this->badanPublik?->telepon_responden ?? 'Tidak ada';
 
-            // cek jawaban terakhir
-            $kategoriTerakhir = Kategori::latest('id')->first();
-            if ($kategoriTerakhir) {
-                $pertanyaanTerakhir = $kategoriTerakhir->pertanyaans()->latest('id')->first();
-                if ($pertanyaanTerakhir) {
-                    $jawabanTerakhir = Jawaban::where('pertanyaan_id', $pertanyaanTerakhir->id)
-                        ->whereHas('submission', function ($query) use ($user) {
-                            $query->where('user_id', $user->id);
-                        })
-                        ->exists();
+            // Get active schedule
+            $jadwalAktif = Jadwal::active()->first();
 
-                    if ($jawabanTerakhir) {
-                        $this->sudahSelesai = true;
+            if ($jadwalAktif) {
+                // cek jawaban terakhir untuk active schedule
+                $kategoriTerakhir = Kategori::latest('id')->first();
+                if ($kategoriTerakhir) {
+                    $jadwalPertanyaanTerakhir = JadwalPertanyaan::where('jadwal_id', $jadwalAktif->id)
+                        ->whereHas('pertanyaanTemplate', function($query) use ($kategoriTerakhir) {
+                            $query->where('kategori_id', $kategoriTerakhir->id);
+                        })
+                        ->latest('id')
+                        ->first();
+
+                    if ($jadwalPertanyaanTerakhir) {
+                        $jawabanTerakhir = Jawaban::where('jadwal_pertanyaan_id', $jadwalPertanyaanTerakhir->id)
+                            ->whereHas('submission', function ($query) use ($user) {
+                                $query->where('user_id', $user->id);
+                            })
+                            ->exists();
+
+                        if ($jawabanTerakhir) {
+                            $this->sudahSelesai = true;
+                        }
                     }
                 }
-            }
-        }
 
-        // cek jadwal
-        $jadwalDb = Jadwal::first();
-        if ($jadwalDb) {
-            $tanggalMulai   = Carbon::parse($jadwalDb->tanggal_mulai);
-            $tanggalSelesai = Carbon::parse($jadwalDb->tanggal_selesai);
-
-            $this->jadwal = $tanggalMulai->isoFormat('D MMMM YYYY') . ' - ' . $tanggalSelesai->isoFormat('D MMMM YYYY');
-
-            $sekarang = Carbon::now();
-            if ($sekarang->between($tanggalMulai, $tanggalSelesai->endOfDay())) {
+                // Set jadwal info
+                $tanggalMulai   = Carbon::parse($jadwalAktif->tanggal_mulai);
+                $tanggalSelesai = Carbon::parse($jadwalAktif->tanggal_selesai);
+                $this->jadwal = $jadwalAktif->nama . ' (' . $jadwalAktif->tahun . ') - ' .
+                                $tanggalMulai->isoFormat('D MMMM YYYY') . ' s/d ' .
+                                $tanggalSelesai->isoFormat('D MMMM YYYY');
                 $this->isJadwalAktif = true;
+            } else {
+                // Check if any jadwal exists but not active
+                $jadwalDb = Jadwal::first();
+                if ($jadwalDb) {
+                    $tanggalMulai   = Carbon::parse($jadwalDb->tanggal_mulai);
+                    $tanggalSelesai = Carbon::parse($jadwalDb->tanggal_selesai);
+                    $this->jadwal = $jadwalDb->nama . ' (' . $jadwalDb->tahun . ') - ' .
+                                    $tanggalMulai->isoFormat('D MMMM YYYY') . ' s/d ' .
+                                    $tanggalSelesai->isoFormat('D MMMM YYYY');
+                }
             }
         }
     }
@@ -109,6 +125,8 @@ new #[Layout('components.layouts.app')] class extends Component
                                 </button>
                                 @if ($jadwal !== 'Belum diatur')
                                     <p class="text-sm text-gray-500 mt-2">Kuesioner belum dapat diisi sesuai jadwal yang ditentukan.</p>
+                                @else
+                                    <p class="text-sm text-gray-500 mt-2">Belum ada jadwal yang tersedia.</p>
                                 @endif
                             @endif
                         </div>

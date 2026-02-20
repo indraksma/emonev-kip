@@ -26,7 +26,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function mount(User $user): void
     {
         $this->user = $user->load('badanPublik');
-        
+
         // Isi properti form dengan data yang ada
         $this->nama_badan_publik = $this->user->badanPublik->nama_badan_publik;
         $this->website = $this->user->badanPublik->website;
@@ -161,7 +161,7 @@ new #[Layout('components.layouts.admin')] class extends Component
 
                     {{-- Informasi Akun E-Monev --}}
                     <fieldset>
-                        <legend class="text-base font-semibold text-gray-900 mb-2">Informasi Akun E-Monev</legend>
+                        <legend class="text-base font-semibold text-gray-900 mb-2">Informasi Akun E-Monev KIP</legend>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="email_akun" class="block text-sm font-medium text-gray-700">Email</label>

@@ -8,7 +8,7 @@
         <!-- Favicon -->
         <link rel="icon" type="image/png" href="{{ asset('images/logobna.png') }}">
 
-        <title>{{ $title ?? 'Admin Dashboard - E-Monev' }}</title>
+        <title>{{ $title ?? 'Admin Dashboard - E-Monev KIP' }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -25,10 +25,10 @@
                     <div class="p-6">
                         <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2">
                             <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                            <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                            <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                         </a>
                     </div>
-                    
+
                     {{-- Menambahkan padding horizontal dan vertikal untuk memberi jarak antar menu --}}
                     <nav class="mt-6 px-4 space-y-2">
                         {{-- Helper variables to check the current route --}}
@@ -102,7 +102,7 @@
                             @endif
                             <span class="ml-4">Pesan</span>
                         </a>
-                        
+
                         {{-- Menu Pengaturan --}}
                         <a href="{{ route('admin.pengaturan') }}" class="flex items-center px-4 py-3 rounded-lg {{ $isPengaturan ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' }}">
                             @if ($isPengaturan)
@@ -136,7 +136,7 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         <span class="text-sm font-medium text-gray-700">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
-                        
+
                         @if(Auth::guard('admin')->user()->profile_photo_path)
                             <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/' . Auth::guard('admin')->user()->profile_photo_path) }}?v={{ time() }}" alt="Foto Profil">
                         @else

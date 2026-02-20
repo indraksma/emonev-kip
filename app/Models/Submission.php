@@ -15,6 +15,7 @@ class Submission extends Model
     protected $fillable = [
         'user_id',
         'kategori_id',
+        'jadwal_id',
         'tanggal_submit',
         'status_verifikasi',
     ];
@@ -33,6 +34,14 @@ class Submission extends Model
     public function kategori(): BelongsTo
     {
         return $this->belongsTo(Kategori::class);
+    }
+
+    /**
+     * Submission ini untuk jadwal apa.
+     */
+    public function jadwal(): BelongsTo
+    {
+        return $this->belongsTo(Jadwal::class);
     }
 
     public function jawaban(): HasMany

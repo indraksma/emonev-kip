@@ -19,11 +19,6 @@ new #[Layout('components.layouts.app')] class extends Component
     public string $telepon_responden = '';
     public string $jabatan = '';
 
-    // Data PPID
-    public string $nama_ppid = '';
-    public string $telepon_ppid = '';
-    public string $email_ppid = '';
-
     /**
      * Mount the component and pre-fill the form with existing data.
      */
@@ -42,10 +37,6 @@ new #[Layout('components.layouts.app')] class extends Component
             $this->nama_responden = $user->name;
             $this->telepon_responden = $badanPublik->telepon_responden;
             $this->jabatan = $badanPublik->jabatan;
-
-            $this->nama_ppid = $badanPublik->nama_ppid;
-            $this->telepon_ppid = $badanPublik->telepon_ppid;
-            $this->email_ppid = $badanPublik->email_ppid;
         }
     }
 
@@ -66,9 +57,6 @@ new #[Layout('components.layouts.app')] class extends Component
             'nama_responden' => ['required', 'string', 'max:255'],
             'telepon_responden' => ['required', 'string', 'max:20'],
             'jabatan' => ['required', 'string', 'max:255'],
-            'nama_ppid' => ['required', 'string', 'max:255'],
-            'telepon_ppid' => ['required', 'string', 'max:20'],
-            'email_ppid' => ['required', 'string', 'email', 'max:255'],
         ]);
 
         // Update user's name if it has changed
@@ -144,28 +132,6 @@ new #[Layout('components.layouts.app')] class extends Component
                                     <label for="jabatan" class="block text-sm font-medium text-gray-700">Jabatan</label>
                                     <input wire:model="jabatan" id="jabatan" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     <x-input-error :messages="$errors->get('jabatan')" class="mt-2" />
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <!-- Data PPID -->
-                        <fieldset class="space-y-6">
-                            <legend class="text-lg font-semibold text-gray-900">Data PPID</legend>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="nama_ppid" class="block text-sm font-medium text-gray-700">Nama PPID</label>
-                                    <input wire:model="nama_ppid" id="nama_ppid" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <x-input-error :messages="$errors->get('nama_ppid')" class="mt-2" />
-                                </div>
-                                <div>
-                                    <label for="telepon_ppid" class="block text-sm font-medium text-gray-700">No. Telepon</label>
-                                    <input wire:model="telepon_ppid" id="telepon_ppid" type="text" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <x-input-error :messages="$errors->get('telepon_ppid')" class="mt-2" />
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="email_ppid" class="block text-sm font-medium text-gray-700">Email PPID</label>
-                                    <input wire:model="email_ppid" id="email_ppid" type="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <x-input-error :messages="$errors->get('email_ppid')" class="mt-2" />
                                 </div>
                             </div>
                         </fieldset>

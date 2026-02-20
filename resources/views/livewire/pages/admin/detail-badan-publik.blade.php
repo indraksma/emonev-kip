@@ -99,7 +99,7 @@ new #[Layout('components.layouts.admin')] class extends Component
 
                 {{-- Informasi Akun E-Monev --}}
                 <fieldset>
-                    <legend class="text-base font-semibold text-gray-900 mb-2">Informasi Akun E-Monev</legend>
+                    <legend class="text-base font-semibold text-gray-900 mb-2">Informasi Akun E-Monev KIP</legend>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {{ displayInfo('Email', $user->email) }}
                         <div>

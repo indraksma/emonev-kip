@@ -52,7 +52,7 @@ Route::middleware('admin')->group(function () {
     Volt::route('/kuesioner/jadwal', 'pages.admin.kuesioner.jadwal')->name('kuesioner.jadwal');
     Volt::route('/kuesioner/kategori/{kategori}/pertanyaan', 'pages.admin.kuesioner.detail-pertanyaan')->name('kuesioner.pertanyaan.index');
     Volt::route('/kuesioner/kategori/{kategori}/pertanyaan/create', 'pages.admin.kuesioner.create-pertanyaan')->name('kuesioner.pertanyaan.create');
-    Volt::route('/kuesioner/kategori/{kategori}/pertanyaan/{pertanyaan}/edit', 'pages.admin.kuesioner.create-pertanyaan')->name('kuesioner.pertanyaan.edit');
+    Volt::route('/kuesioner/kategori/{kategori}/pertanyaan/{jadwalPertanyaan}/edit', 'pages.admin.kuesioner.create-pertanyaan')->name('kuesioner.pertanyaan.edit');
 
     // --- Penilaian ---
     // URL: /admin/penilaian

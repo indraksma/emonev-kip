@@ -21,8 +21,8 @@ class Kategori extends Model
         'deskripsi',
     ];
 
-    public function pertanyaans(): HasMany
+    public function pertanyaanTemplates(): HasMany
     {
-        return $this->hasMany(Pertanyaan::class);
+        return $this->hasMany(PertanyaanTemplate::class);
     }
 }

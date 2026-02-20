@@ -8,7 +8,7 @@
         <!-- Favicon -->
         <link rel="icon" type="image/png" href="{{ asset('images/logobna.png') }}">
 
-        <title>{{ $title ?? 'E-Monev Banjarnegara' }}</title>
+        <title>{{ $title ?? 'E-Monev KIP Banjarnegara' }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet" />
@@ -22,7 +22,7 @@
                     <div class="flex justify-between items-center py-3">
                         <a href="/" class="flex items-center space-x-2">
                             <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                            <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                            <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                         </a>
                         <nav class="hidden md:flex items-center space-x-2 lg:space-x-4">
                             <a href="{{ route('user.dashboard') }}" class="px-4 py-2 rounded-md {{ request()->routeIs('user.dashboard') ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600' }}">Beranda</a>
@@ -41,7 +41,7 @@
                 {{ $slot }}
             </main>
         </div>
-        
+
         @stack('scripts')
     </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Hasil E-Monev</title>
+    <title>Laporan Hasil E-Monev KIP</title>
     <style>
         body { font-family: sans-serif; }
         table { width: 100%; border-collapse: collapse; }
@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h1>Laporan Hasil E-Monev</h1>
+    <h1>Laporan Hasil E-Monev KIP</h1>
     <div class="info">
         <p><strong>Kategori:</strong> {{ $namaKategori }}</p>
         <p><strong>Tanggal Unduh:</strong> {{ $tanggal }}</p>

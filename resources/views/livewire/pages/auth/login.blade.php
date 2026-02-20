@@ -32,12 +32,12 @@ new #[Layout('components.layouts.guest')] class extends Component
                 <!-- Logo -->
                 <div class="flex items-center space-x-2 mb-12">
                     <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                    <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                    <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
                 </div>
 
                 <!-- Header -->
                 <h1 class="text-3xl font-bold text-gray-900">Masuk</h1>
-                <p class="mt-2 text-gray-600">Masuk untuk mengakses website e-monev</p>
+                <p class="mt-2 text-gray-600">Masuk untuk mengakses website e-monev KIP</p>
 
                 <!-- Session Status -->
                 <x-auth-session-status class="my-4" :status="session('status')" />

@@ -56,7 +56,7 @@ new #[Layout('components.layouts.app')] class extends Component
             <!-- Logo -->
             <div class="flex items-center space-x-2 mb-12">
                 <img src="/images/logobna.png" alt="Logo E-Monev" class="h-10 w-auto">
-                <span class="text-xl font-bold text-gray-800">E-Monev</span>
+                <span class="text-xl font-bold text-gray-800">E-Monev KIP</span>
             </div>
 
             <!-- Back to Login Link -->

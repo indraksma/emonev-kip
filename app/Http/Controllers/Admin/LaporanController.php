@@ -30,6 +30,6 @@ class LaporanController extends Controller
             'tanggal' => now()->isoFormat('D MMMM YYYY')
         ]);
 
-        return $pdf->download('laporan-e-monev-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-e-monev-kip-' . now()->format('Y-m-d') . '.pdf');
     }
 }
