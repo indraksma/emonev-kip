@@ -36,6 +36,11 @@ class Jadwal extends Model
         return $this->hasMany(Submission::class);
     }
 
+    public function hasilPenilaians(): HasMany
+    {
+        return $this->hasMany(HasilPenilaian::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)

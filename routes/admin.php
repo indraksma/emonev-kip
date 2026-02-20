@@ -58,7 +58,7 @@ Route::middleware('admin')->group(function () {
     // URL: /admin/penilaian
     // Nama: admin.penilaian
     Volt::route('/penilaian', 'pages.admin.penilaian')->name('penilaian');
-    Volt::route('/penilaian/{submission}/verifikasi', 'pages.admin.verifikasi-nilai')->name('verifikasi.show');
+    Volt::route('/penilaian/{user}/jadwal/{jadwal}/verifikasi', 'pages.admin.verifikasi-nilai')->name('penilaian.verifikasi');
 
     // --- Badan Publik ---
     // URL: /admin/badan-publik
@@ -75,6 +75,7 @@ Route::middleware('admin')->group(function () {
 
     // --- Lain-lain ---
     Volt::route('/pesan', 'pages.admin.pesan')->name('pesan');
+    Volt::route('/klasifikasi-penilaian', 'pages.admin.klasifikasi-penilaian')->name('klasifikasi-penilaian');
     Volt::route('/pengaturan', 'pages.admin.pengaturan')->name('pengaturan');
     Volt::route('/keluar', 'pages.admin.keluar')->name('keluar');
 

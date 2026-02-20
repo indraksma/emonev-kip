@@ -73,6 +73,9 @@ class User extends Authenticatable
         return $this->hasMany(Submission::class);
     }
 
-    
+    public function hasilPenilaians(): HasMany
+    {
+        return $this->hasMany(HasilPenilaian::class);
+    }
 
 }

@@ -39,6 +39,7 @@
                             $isBadanPublik = request()->routeIs('admin.badan-publik*');
                             $isLaporan = request()->routeIs('admin.laporan*');
                             $isPesan = request()->routeIs('admin.pesan*');
+                            $isKlasifikasi = request()->routeIs('admin.klasifikasi-penilaian*');
                             $isPengaturan = request()->routeIs('admin.pengaturan*');
                             $isKeluar = request()->routeIs('admin.keluar*'); // Tambahkan ini
                         @endphp
@@ -101,6 +102,16 @@
                                 <img src="{{ asset('images/icons/pesan.png') }}" alt="Pesan Icon" class="w-6 h-6">
                             @endif
                             <span class="ml-4">Pesan</span>
+                        </a>
+
+                        {{-- Menu Pengaturan --}}
+                        <a href="{{ route('admin.klasifikasi-penilaian') }}" class="flex items-center px-4 py-3 rounded-lg {{ $isKlasifikasi ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' }}">
+                            @if ($isKlasifikasi)
+                                <img src="{{ asset('images/icons/pengaturan-active.png') }}" alt="Klasifikasi Icon" class="w-6 h-6">
+                            @else
+                                <img src="{{ asset('images/icons/pengaturan.png') }}" alt="Klasifikasi Icon" class="w-6 h-6">
+                            @endif
+                            <span class="ml-4">Klasifikasi</span>
                         </a>
 
                         {{-- Menu Pengaturan --}}

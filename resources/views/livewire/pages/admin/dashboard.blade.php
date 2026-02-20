@@ -1,8 +1,9 @@
 <?php
 
-use App\Models\User;
+use App\Models\HasilPenilaian;
 use App\Models\Submission;
-use App\Models\Laporan;
+use App\Models\User;
+use App\Services\PenilaianService;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -18,16 +19,39 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function mount(): void
     {
         $this->ppidTerdaftar = User::where('role', 'dinas')->count();
+        $this->menungguVerifikasi = HasilPenilaian::where('status_verifikasi', 'Menunggu')->count();
+        $this->selesaiVerifikasi = HasilPenilaian::where('status_verifikasi', 'Terverifikasi')->count();
+        $this->telahDinilai = HasilPenilaian::count();
 
-        $this->menungguVerifikasi = Submission::where('status_verifikasi', 'Menunggu')->count();
-        $this->selesaiVerifikasi = Submission::where('status_verifikasi', 'Terverifikasi')->count();
+        $service = app(PenilaianService::class);
 
-        $this->telahDinilai = Laporan::count();
+        $this->listVerifikasi = Submission::query()
+            ->selectRaw('MAX(id) as id, user_id, jadwal_id, MAX(tanggal_submit) as tanggal_submit')
+            ->whereNotNull('jadwal_id')
+            ->with(['user.badanPublik', 'jadwal'])
+            ->groupBy('user_id', 'jadwal_id')
+            ->orderByDesc('tanggal_submit')
+            ->take(10)
+            ->get()
+            ->map(function (Submission $row) use ($service) {
+                $hasil = HasilPenilaian::query()
+                    ->where('user_id', $row->user_id)
+                    ->where('jadwal_id', $row->jadwal_id)
+                    ->first();
 
-        $this->listVerifikasi = Submission::with(['user.badanPublik', 'kategori']) // Relasi 'kategori' ada di Submission
-                                    ->latest('tanggal_submit')
-                                    ->take(10)
-                                    ->get();
+                $nilaiMap = $service->getNilaiKategoriMap((int) $row->user_id, (int) $row->jadwal_id);
+
+                return [
+                    'user' => $row->user,
+                    'jadwal' => $row->jadwal,
+                    'user_id' => $row->user_id,
+                    'jadwal_id' => $row->jadwal_id,
+                    'tanggal_submit' => $row->tanggal_submit,
+                    'dinilai' => $nilaiMap->whereNotNull('nilai')->count(),
+                    'total' => $nilaiMap->count(),
+                    'status_verifikasi' => $hasil?->status_verifikasi ?? 'Menunggu',
+                ];
+            });
     }
 }; ?>
 
@@ -39,9 +63,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     </x-slot>
 
     <main class="p-8">
-        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {{-- Card 1 --}}
             <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">PPID Pelaksana Terdaftar</p>
@@ -51,30 +73,27 @@ new #[Layout('components.layouts.admin')] class extends Component
                     <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 </div>
             </div>
-            {{-- Card 2 --}}
             <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Kuesioner Menunggu Verifikasi</p>
+                    <p class="text-sm text-gray-500">Dinas Menunggu Verifikasi</p>
                     <p class="text-3xl font-bold text-gray-900">{{ $menungguVerifikasi }}</p>
                 </div>
                 <div class="bg-yellow-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
-            {{-- Card 3 --}}
             <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Kuesioner Selesai Di Verifikasi</p>
+                    <p class="text-sm text-gray-500">Dinas Terverifikasi</p>
                     <p class="text-3xl font-bold text-gray-900">{{ $selesaiVerifikasi }}</p>
                 </div>
                 <div class="bg-green-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
-            {{-- Card 4 --}}
             <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">PPID Pelaksana Telah Dinilai</p>
+                    <p class="text-sm text-gray-500">Rekap Hasil Penilaian</p>
                     <p class="text-3xl font-bold text-gray-900">{{ $telahDinilai }}</p>
                 </div>
                 <div class="bg-pink-100 p-3 rounded-full">
@@ -83,7 +102,6 @@ new #[Layout('components.layouts.admin')] class extends Component
             </div>
         </div>
 
-        <!-- List Verifikasi Nilai -->
         <div class="bg-white p-6 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold text-gray-800">List Verifikasi Nilai Dinas</h2>
@@ -95,8 +113,8 @@ new #[Layout('components.layouts.admin')] class extends Component
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">PPID Pelaksana</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori Kuesioner</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Submit</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jadwal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori Dinilai</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status Verifikasi</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                         </tr>
@@ -105,35 +123,23 @@ new #[Layout('components.layouts.admin')] class extends Component
                         @forelse($listVerifikasi as $index => $item)
                             <tr>
                                 <td class="px-6 py-4 text-sm">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 text-sm">{{ $item->user->badanPublik->nama_badan_publik ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-sm">{{ $item['user']->badanPublik->nama_badan_publik ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-sm">{{ $item['jadwal']->nama ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm">{{ $item['dinilai'] }}/{{ $item['total'] }}</td>
                                 <td class="px-6 py-4 text-sm">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-
-                                        {{ $item->kategori->nama ?? 'N/A' }}
-                                    </span>
-                                </td>
-
-                                <td class="px-6 py-4 text-sm">{{ \Carbon\Carbon::parse($item->tanggal_submit)->format('d F Y') }}</td>
-                                <td class="px-6 py-4 text-sm">
-                                    @if($item->status_verifikasi == 'Terverifikasi')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Terverifikasi
-                                        </span>
+                                    @if($item['status_verifikasi'] === 'Terverifikasi')
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terverifikasi</span>
                                     @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            Menunggu
-                                        </span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Menunggu</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    <a href="{{ route('admin.verifikasi.show', $item->id) }}" wire:navigate class="px-3 py-1 text-xs font-medium text-white bg-gray-800 rounded-md hover:bg-gray-900">Verifikasi</a>
+                                    <a href="{{ route('admin.penilaian.verifikasi', ['user' => $item['user_id'], 'jadwal' => $item['jadwal_id']]) }}" wire:navigate class="px-3 py-1 text-xs font-medium text-white bg-gray-800 rounded-md hover:bg-gray-900">Verifikasi</a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-                                    Belum ada data untuk diverifikasi.
-                                </td>
+                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Belum ada data untuk diverifikasi.</td>
                             </tr>
                         @endforelse
                     </tbody>

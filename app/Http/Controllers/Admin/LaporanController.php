@@ -4,29 +4,31 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Penilaian;
+use App\Models\HasilPenilaian;
+use App\Models\KlasifikasiPenilaian;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
     public function unduhPdf(Request $request)
     {
-        $kategoriId = $request->query('kategoriId');
+        $klasifikasiId = $request->query('klasifikasiId');
 
-        $query = Penilaian::with(['submission.user.badanPublik', 'submission.kategori']);
+        $query = HasilPenilaian::with(['user.badanPublik', 'jadwal', 'klasifikasiPenilaian'])
+            ->where('status_verifikasi', 'Terverifikasi');
 
-        if ($kategoriId && $kategoriId !== 'semua') {
-            $query->whereHas('submission', function ($q) use ($kategoriId) {
-                $q->where('kategori_id', $kategoriId);
-            });
+        if ($klasifikasiId && $klasifikasiId !== 'semua') {
+            $query->where('klasifikasi_penilaian_id', $klasifikasiId);
         }
 
         $laporans = $query->get();
-        $namaKategori = $kategoriId && $kategoriId !== 'semua' ? \App\Models\Kategori::find($kategoriId)->nama : 'Semua Kategori';
+        $namaKlasifikasi = $klasifikasiId && $klasifikasiId !== 'semua'
+            ? KlasifikasiPenilaian::find($klasifikasiId)?->nama
+            : 'Semua Klasifikasi';
 
         $pdf = Pdf::loadView('admin.laporan-pdf', [
             'laporans' => $laporans,
-            'namaKategori' => $namaKategori,
+            'namaKlasifikasi' => $namaKlasifikasi,
             'tanggal' => now()->isoFormat('D MMMM YYYY')
         ]);
 

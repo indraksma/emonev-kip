@@ -11,7 +11,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     public function mount(User $user): void
     {
         // Eager load relasi untuk menghindari query N+1
-        $this->user = $user->load(['badanPublik', 'submissions.penilaian']);
+        $this->user = $user->load(['badanPublik', 'hasilPenilaians.klasifikasiPenilaian']);
     }
 
     // DIHAPUS: Fungsi resetPassword() tidak lagi diperlukan
@@ -86,11 +86,12 @@ new #[Layout('components.layouts.admin')] class extends Component
                 <fieldset>
                     <legend class="text-base font-semibold text-gray-900 mb-2">Riwayat Hasil Kuesioner</legend>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Menghitung rata-rata nilai dan status paling umum --}}
+                        {{-- Ringkasan hasil penilaian final per jadwal --}}
                         @php
-                            $penilaians = $user->submissions->pluck('penilaian')->filter();
-                            $averageScore = $penilaians->avg('nilai');
-                            $commonStatus = $penilaians->count() > 0 ? $penilaians->mode('status_informatif')[0] : null;
+                            $hasilPenilaians = $user->hasilPenilaians;
+                            $averageScore = $hasilPenilaians->avg('nilai_akhir');
+                            $statusModes = $hasilPenilaians->pluck('klasifikasiPenilaian.nama')->filter()->mode();
+                            $commonStatus = $statusModes[0] ?? null;
                         @endphp
                         {{ displayInfo('Nilai Rata-rata', $averageScore ? number_format($averageScore, 2) : 'Belum ada') }}
                         {{ displayInfo('Status Umum', $commonStatus ?? 'Belum ada') }}

@@ -171,32 +171,19 @@
         <section id="statistik" class="bg-gradient-to-b from-white to-blue-50 py-20">
             <div class="max-w-screen-xl mx-auto px-6 md:px-20 text-center">
                 <h2 class="text-[56px] font-bold text-center text-blue-600 mb-16 leading-tight">Statistik Hasil Penilaian</h2>
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     <div class="flex flex-col items-center">
                         <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
                         <p class="font-semibold text-gray-700">PPID Pelaksana yang Terdaftar</p>
                         <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $statistik['total_terdaftar'] }}">0</p>
                     </div>
-                    <div class="flex flex-col items-center">
-                        <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
-                        <p class="font-semibold text-gray-700">PPID Pelaksana Menuju Informatif</p>
-                        <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $statistik['menuju_informatif'] }}">0</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
-                        <p class="font-semibold text-gray-700">PPID Pelaksana Kurang Informatif</p>
-                        <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $statistik['kurang_informatif'] }}">0</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
-                        <p class="font-semibold text-gray-700">PPID Pelaksana Cukup Informatif</p>
-                        <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $statistik['cukup_informatif'] }}">0</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
-                        <p class="font-semibold text-gray-700">PPID Pelaksana Sangat Informatif</p>
-                        <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $statistik['sangat_informatif'] }}">0</p>
-                    </div>
+                    @foreach(($statistik['klasifikasi'] ?? []) as $item)
+                        <div class="flex flex-col items-center">
+                            <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
+                            <p class="font-semibold text-gray-700">PPID Pelaksana {{ $item['nama'] }}</p>
+                            <p class="counter text-4xl font-bold text-blue-600 mt-2" data-target="{{ $item['jumlah'] }}">0</p>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </section>

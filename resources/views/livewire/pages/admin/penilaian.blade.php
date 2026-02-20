@@ -1,120 +1,126 @@
 <?php
 
+use App\Models\HasilPenilaian;
+use App\Models\Submission;
+use App\Services\PenilaianService;
+use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
-use App\Models\Kategori;
-use Livewire\Attributes\Layout;
-use App\Models\Submission;
 
 new #[Layout('components.layouts.admin')] class extends Component
 {
     use WithPagination;
 
-    public $kategoriId;
-    public $search = ''; // Properti untuk menampung input pencarian
+    public string $search = '';
 
-    public function filterByKategori($kategoriId)
+    public function with(): array
     {
-        $this->kategoriId = $kategoriId;
-        $this->resetPage();
-    }
+        $query = Submission::query()
+            ->selectRaw('MAX(id) as id, user_id, jadwal_id, MAX(tanggal_submit) as tanggal_submit')
+            ->whereNotNull('jadwal_id')
+            ->with(['user.badanPublik', 'jadwal'])
+            ->groupBy('user_id', 'jadwal_id')
+            ->orderByDesc('tanggal_submit');
 
-    public function with()
-    {
-        $kategoris = Kategori::all();
-
-        // Query dasar untuk mengambil data submission
-        $query = Submission::with(['user.badanPublik', 'kategori'])
-                        ->latest('tanggal_submit');
-
-        // Terapkan filter kategori jika ada yang dipilih
-        if ($this->kategoriId && $this->kategoriId !== 'semua') {
-            $query->where('kategori_id', $this->kategoriId);
-        }
-
-        // Terapkan filter pencarian
-        if (!empty($this->search)) {
+        if ($this->search !== '') {
             $query->whereHas('user.badanPublik', function ($q) {
                 $q->where('nama_badan_publik', 'like', '%' . $this->search . '%');
             });
         }
 
-        return [
-            'submissions' => $query->paginate(10),
-            'kategoris' => $kategoris,
-        ];
+        $groups = $query->paginate(10);
+        $service = app(PenilaianService::class);
+
+        $rows = $groups->getCollection()->map(function (Submission $group) use ($service) {
+            $kategoriAktif = $service->getKategoriAktifByJadwal((int) $group->jadwal_id);
+            $nilaiKategori = $service->getNilaiKategoriMap((int) $group->user_id, (int) $group->jadwal_id);
+            $hasil = HasilPenilaian::query()
+                ->with('klasifikasiPenilaian')
+                ->where('user_id', $group->user_id)
+                ->where('jadwal_id', $group->jadwal_id)
+                ->first();
+
+            return [
+                'user' => $group->user,
+                'jadwal' => $group->jadwal,
+                'user_id' => (int) $group->user_id,
+                'jadwal_id' => (int) $group->jadwal_id,
+                'tanggal_submit' => $group->tanggal_submit,
+                'total_kategori' => $kategoriAktif->count(),
+                'dinilai_kategori' => $nilaiKategori->whereNotNull('nilai')->count(),
+                'status_verifikasi' => $hasil?->status_verifikasi ?? 'Menunggu',
+                'klasifikasi' => $hasil?->klasifikasiPenilaian?->nama,
+                'nilai_akhir' => $hasil?->nilai_akhir,
+            ];
+        });
+
+        $groups->setCollection($rows);
+
+        return ['groups' => $groups];
     }
 }; ?>
 
 <div>
-    {{-- Slot untuk header halaman --}}
     <x-slot name="header">
         <div class="flex items-center space-x-8">
             <h1 class="text-3xl font-bold text-gray-900">Penilaian</h1>
+            <div class="relative">
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari Badan Publik..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
         </div>
     </x-slot>
 
-    {{-- Konten utama halaman --}}
     <main class="p-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-6">List Verifikasi Nilai Dinas</h2>
 
-            {{-- Filter Kategori (Tabs) --}}
-            <div class="mb-6">
-                <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
-                        <a href="#" wire:click.prevent="filterByKategori('semua')"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm cursor-pointer {{ !$kategoriId || $kategoriId === 'semua' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Semua Kategori
-                        </a>
-                        @foreach ($kategoris as $kategori)
-                            <a href="#" wire:click.prevent="filterByKategori({{ $kategori->id }})"
-                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm cursor-pointer {{ $kategoriId == $kategori->id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                                {{ $kategori->nama }}
-                            </a>
-                        @endforeach
-                    </nav>
-                </div>
-            </div>
-
-            {{-- Tabel Data --}}
             <div class="overflow-x-auto">
                 <table class="w-full min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">PPID Pelaksana</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Submit</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jadwal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori Dinilai</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nilai Akhir</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Klasifikasi</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($submissions as $submission)
+                        @forelse ($groups as $group)
                             <tr>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $loop->iteration + $submissions->firstItem() - 1 }}</td>
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $submission->user->badanPublik->nama_badan_publik ?? $submission->user->name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $loop->iteration + $groups->firstItem() - 1 }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $group['user']->badanPublik->nama_badan_publik ?? $group['user']->name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    {{ $group['jadwal']->nama ?? '-' }}
+                                    @if($group['jadwal'])
+                                        <span class="text-xs text-gray-400">({{ $group['jadwal']->tahun }})</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-700">{{ $group['dinilai_kategori'] }}/{{ $group['total_kategori'] }}</td>
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-800">{{ $group['nilai_akhir'] !== null ? number_format($group['nilai_akhir'], 2) : '-' }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        {{ $submission->kategori->nama ?? 'N/A' }}
+                                        {{ $group['klasifikasi'] ?? 'Belum terklasifikasi' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ \Carbon\Carbon::parse($submission->tanggal_submit)->isoFormat('D MMM YYYY') }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full {{ $submission->status_verifikasi == 'Terverifikasi' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $submission->status_verifikasi }}
+                                    <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full {{ $group['status_verifikasi'] === 'Terverifikasi' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                        {{ $group['status_verifikasi'] }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium">
-                                    <a href="{{ route('admin.verifikasi.show', $submission->id) }}" class="px-4 py-2 bg-gray-800 rounded-md font-semibold text-xs text-white uppercase hover:bg-gray-700">
+                                    <a href="{{ route('admin.penilaian.verifikasi', ['user' => $group['user_id'], 'jadwal' => $group['jadwal_id']]) }}" wire:navigate class="px-4 py-2 bg-gray-800 rounded-md font-semibold text-xs text-white uppercase hover:bg-gray-700">
                                         Verifikasi
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
                                     Tidak ada data untuk ditampilkan.
                                 </td>
                             </tr>
@@ -123,9 +129,8 @@ new #[Layout('components.layouts.admin')] class extends Component
                 </table>
             </div>
 
-            {{-- Pagination Links --}}
             <div class="mt-6">
-                {{ $submissions->links() }}
+                {{ $groups->links() }}
             </div>
         </div>
     </main>

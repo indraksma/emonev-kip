@@ -2,36 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User; // Asumsi model User untuk dinas/PPID
-use App\Models\Penilaian; // Asumsi ada model Penilaian
+use App\Models\HasilPenilaian;
+use App\Models\Jadwal;
+use App\Models\KlasifikasiPenilaian;
+use App\Models\User;
 
 class LandingPageController extends Controller
 {
     public function index()
     {
-        // 1. Menghitung PPID yang terdaftar
-        // Asumsi setiap dinas yang mendaftar adalah satu user dengan role 'dinas'
-        $totalTerdaftar = User::where('role', 'dinas')->count();
+        $jadwalAcuan = Jadwal::active()->first() ?? Jadwal::latest('tanggal_mulai')->first();
+        $klasifikasiAktif = KlasifikasiPenilaian::query()->active()->orderBy('urutan')->get();
 
-        // 2. Menghitung status penilaian
-        // Asumsi ada tabel 'penilaians' dengan kolom 'status'
-        // Status bisa berisi: 'Menuju Informatif', 'Kurang Informatif', dll.
-        $menujuInformatif = Penilaian::where('status', 'Menuju Informatif')->count();
-        $kurangInformatif = Penilaian::where('status', 'Kurang Informatif')->count();
-        $cukupInformatif = Penilaian::where('status', 'Cukup Informatif')->count();
-        $sangatInformatif = Penilaian::where('status', 'Sangat Informatif')->count();
+        $statistikKlasifikasi = $klasifikasiAktif->map(function ($item) use ($jadwalAcuan) {
+            $query = HasilPenilaian::query()
+                ->where('klasifikasi_penilaian_id', $item->id)
+                ->where('status_verifikasi', 'Terverifikasi');
 
-        // Gabungkan semua data ke dalam satu array
+            if ($jadwalAcuan) {
+                $query->where('jadwal_id', $jadwalAcuan->id);
+            }
+
+            return [
+                'nama' => $item->nama,
+                'jumlah' => $query->count(),
+            ];
+        });
+
         $statistik = [
-            'total_terdaftar' => $totalTerdaftar,
-            'menuju_informatif' => $menujuInformatif,
-            'kurang_informatif' => $kurangInformatif,
-            'cukup_informatif' => $cukupInformatif,
-            'sangat_informatif' => $sangatInformatif,
+            'total_terdaftar' => User::where('role', 'dinas')->count(),
+            'klasifikasi' => $statistikKlasifikasi,
         ];
 
-        // Kirim data ke view 'welcome'
         return view('welcome', compact('statistik'));
     }
 }

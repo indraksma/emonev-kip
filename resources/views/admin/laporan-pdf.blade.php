@@ -14,7 +14,7 @@
 <body>
     <h1>Laporan Hasil E-Monev KIP</h1>
     <div class="info">
-        <p><strong>Kategori:</strong> {{ $namaKategori }}</p>
+        <p><strong>Klasifikasi:</strong> {{ $namaKlasifikasi }}</p>
         <p><strong>Tanggal Unduh:</strong> {{ $tanggal }}</p>
     </div>
     <table>
@@ -22,27 +22,24 @@
             <tr>
                 <th>No</th>
                 <th>Badan Publik</th>
-                <th>Kategori Kuesioner</th>
+                <th>Jadwal</th>
                 <th>Nilai Akhir</th>
-                {{-- KOLOM BARU DITAMBAHKAN --}}
-                <th>Tanggal Submit</th>
-                <th>Predikat</th>
+                <th>Tanggal Verifikasi</th>
+                <th>Klasifikasi</th>
             </tr>
         </thead>
         <tbody>
             @forelse($laporans as $laporan)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $laporan->submission->user->badanPublik->nama_badan_publik ?? 'N/A' }}</td>
-                    <td>{{ $laporan->submission->kategori->nama ?? 'N/A' }}</td>
-                    <td>{{ $laporan->nilai }}</td>
-                    {{-- DATA BARU DITAMBAHKAN --}}
-                    <td>{{ \Carbon\Carbon::parse($laporan->submission->tanggal_submit)->isoFormat('D MMM YYYY') }}</td>
-                    <td>{{ $laporan->status_informatif }}</td>
+                    <td>{{ $laporan->user->badanPublik->nama_badan_publik ?? 'N/A' }}</td>
+                    <td>{{ $laporan->jadwal->nama ?? '-' }}</td>
+                    <td>{{ number_format($laporan->nilai_akhir, 2) }}</td>
+                    <td>{{ $laporan->verified_at ? \Carbon\Carbon::parse($laporan->verified_at)->isoFormat('D MMM YYYY') : '-' }}</td>
+                    <td>{{ $laporan->klasifikasiPenilaian->nama ?? 'Belum terklasifikasi' }}</td>
                 </tr>
             @empty
                 <tr>
-                    {{-- Colspan disesuaikan menjadi 6 --}}
                     <td colspan="6" style="text-align: center;">Tidak ada data.</td>
                 </tr>
             @endforelse

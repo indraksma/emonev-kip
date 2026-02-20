@@ -5,8 +5,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingPageController;
 use Livewire\Volt\Volt;
+use App\Models\HasilPenilaian;
+use App\Models\Jadwal;
+use App\Models\KlasifikasiPenilaian;
 use App\Models\User;
-use App\Models\Penilaian;
 
 
 /*
@@ -22,12 +24,31 @@ use App\Models\Penilaian;
 
 // Rute untuk landing page
 Route::get('/', function () {
+    $jadwalAcuan = Jadwal::active()->first() ?? Jadwal::latest('tanggal_mulai')->first();
+
+    $klasifikasiAktif = KlasifikasiPenilaian::query()
+        ->active()
+        ->orderBy('urutan')
+        ->get();
+
+    $statistikKlasifikasi = $klasifikasiAktif->map(function ($item) use ($jadwalAcuan) {
+        $query = HasilPenilaian::query()
+            ->where('klasifikasi_penilaian_id', $item->id)
+            ->where('status_verifikasi', 'Terverifikasi');
+
+        if ($jadwalAcuan) {
+            $query->where('jadwal_id', $jadwalAcuan->id);
+        }
+
+        return [
+            'nama' => $item->nama,
+            'jumlah' => $query->count(),
+        ];
+    })->values();
+
     $statistik = [
         'total_terdaftar' => User::where('role', 'dinas')->count(),
-        'menuju_informatif' => 0, // Ganti dengan logika yang benar jika ada
-        'kurang_informatif' => Penilaian::where('status_informatif', 'Kurang Informatif')->count(),
-        'cukup_informatif' => Penilaian::where('status_informatif', 'Cukup Informatif')->count(),
-        'sangat_informatif' => Penilaian::where('status_informatif', 'Sangat Informatif')->count(),
+        'klasifikasi' => $statistikKlasifikasi,
     ];
     return view('welcome', ['statistik' => $statistik]); // 'welcome' adalah nama file blade Anda
 });
@@ -93,4 +114,3 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 // Panggil semua rute dari file admin.php
-
