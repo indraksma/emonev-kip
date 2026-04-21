@@ -171,7 +171,7 @@
         <section id="statistik" class="bg-gradient-to-b from-white to-blue-50 py-20">
             <div class="max-w-screen-xl mx-auto px-6 md:px-20 text-center">
                 <h2 class="text-[56px] font-bold text-center text-blue-600 mb-16 leading-tight">Statistik Hasil Penilaian</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-6 gap-8">
                     <div class="flex flex-col items-center">
                         <img src="/images/frame-1.png" alt="Icon Statistik" class="mx-auto mb-4 w-24 h-24">
                         <p class="font-semibold text-gray-700">PPID Pelaksana yang Terdaftar</p>

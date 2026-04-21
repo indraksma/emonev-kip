@@ -72,6 +72,7 @@ Route::middleware('admin')->group(function () {
     // Nama: admin.laporan
     Volt::route('/laporan', 'pages.admin.laporan')->name('laporan');
     Route::get('/laporan/unduh', [LaporanController::class, 'unduhPdf'])->name('laporan.unduh');
+    Route::get('/laporan/unduh/{userId}/jadwal/{jadwalId}', [LaporanController::class, 'unduhPdfPerBadanPublik'])->name('laporan.unduh.per-badan-publik');
 
     // --- Lain-lain ---
     Volt::route('/pesan', 'pages.admin.pesan')->name('pesan');

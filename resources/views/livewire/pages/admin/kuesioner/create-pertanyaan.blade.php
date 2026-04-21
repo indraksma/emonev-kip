@@ -10,11 +10,12 @@ use App\Models\PertanyaanTemplate;
 new #[Layout('components.layouts.admin')] class extends Component
 {
     public Kategori $kategori;
-    public ?Jadwal $jadwal;
+    public ?Jadwal $jadwal = null;
     public $jadwalPertanyaanId = null;
     public bool $isEditMode = false;
 
     public string $teks_pertanyaan = '';
+    public string $definisi_operasional = '';
     public string $tipe_jawaban = 'Ya/Tidak';
     public bool $butuh_link = false;
     public bool $butuh_upload = false;
@@ -45,6 +46,7 @@ new #[Layout('components.layouts.admin')] class extends Component
 
             if ($jadwalPertanyaanModel) {
                 $this->teks_pertanyaan = $jadwalPertanyaanModel->teks_pertanyaan;
+                $this->definisi_operasional = $jadwalPertanyaanModel->pertanyaanTemplate->definisi_operasional ?? '';
                 $this->butuh_link = $jadwalPertanyaanModel->butuh_link;
                 $this->butuh_upload = $jadwalPertanyaanModel->butuh_upload;
             }
@@ -58,6 +60,7 @@ new #[Layout('components.layouts.admin')] class extends Component
     {
         $validated = $this->validate([
             'teks_pertanyaan' => 'required|string|min:10',
+            'definisi_operasional' => 'nullable|string',
             'butuh_link' => 'required|boolean',
             'butuh_upload' => 'required|boolean',
         ]);
@@ -73,6 +76,7 @@ new #[Layout('components.layouts.admin')] class extends Component
             if ($jadwalPertanyaan) {
                 $jadwalPertanyaan->update([
                     'teks_pertanyaan' => $validated['teks_pertanyaan'],
+                    'definisi_operasional' => $validated['definisi_operasional'],
                     'butuh_link' => $validated['butuh_link'],
                     'butuh_upload' => $validated['butuh_upload'],
                 ]);
@@ -83,6 +87,7 @@ new #[Layout('components.layouts.admin')] class extends Component
             $template = PertanyaanTemplate::create([
                 'kategori_id' => $this->kategori->id,
                 'teks_pertanyaan' => $validated['teks_pertanyaan'],
+                'definisi_operasional' => $validated['definisi_operasional'],
                 'tipe_jawaban' => $this->tipe_jawaban,
                 'butuh_link' => $validated['butuh_link'],
                 'butuh_upload' => $validated['butuh_upload'],
@@ -97,6 +102,7 @@ new #[Layout('components.layouts.admin')] class extends Component
                 'jadwal_id' => $this->jadwal->id,
                 'pertanyaan_template_id' => $template->id,
                 'teks_pertanyaan' => $validated['teks_pertanyaan'],
+                'definisi_operasional' => $validated['definisi_operasional'],
                 'urutan' => $maxUrutan + 1,
                 'tipe_jawaban' => $this->tipe_jawaban,
                 'butuh_link' => $validated['butuh_link'],
@@ -149,6 +155,15 @@ new #[Layout('components.layouts.admin')] class extends Component
                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                   placeholder="Masukkan Pertanyaan"></textarea>
                         @error('teks_pertanyaan') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Definisi Operasional -->
+                    <div>
+                        <label for="definisi_operasional" class="block text-sm font-medium text-gray-700">Definisi Operasional</label>
+                        <textarea id="definisi_operasional" wire:model="definisi_operasional" rows="3"
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                  placeholder="Masukkan Definisi Operasional (opsional)"></textarea>
+                        @error('definisi_operasional') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Tipe Jawaban -->

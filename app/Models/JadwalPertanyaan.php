@@ -15,6 +15,7 @@ class JadwalPertanyaan extends Model
         'jadwal_id',
         'pertanyaan_template_id',
         'teks_pertanyaan',
+        'definisi_operasional',
         'urutan',
         'tipe_jawaban',
         'butuh_link',
